@@ -1,10 +1,6 @@
 /*----- constants -----*/
-//lookup for our objects
-
 var dataLookup = ['rock', 'paper', 'scissors'];
 
-
-//data model for each 
 var data = {
     rock: {
         image: "https://i.pinimg.com/originals/43/89/a3/4389a3cd5bb89437cac50854a41ae2f8.png",
@@ -23,19 +19,21 @@ var data = {
     }
 }
 
+var countDownSound = new Audio("https://freesound.org/data/previews/426/426888_7913959-lq.mp3");
+
 
 
 /*----- app's state (variables) -----*/
 var timerId, count;
-var countDownSound = new Audio("https://freesound.org/data/previews/426/426888_7913959-lq.mp3");
-
 
 
 /*----- cached element references -----*/
 var $playerImg = $('.playerImg');
 var $computerImg = $('.computerImg');
 
-
+var $playerScore = $('.player-score');
+var $computerScore = $('.comp-score');
+var $tieScore = $('.ties');
 
 
 /*----- event listeners -----*/
@@ -48,25 +46,38 @@ function playGame() {
 }
 
 function timer() {
-    countDownSound.play();
-    $(".timer").text(count + " secs");
     count --;
+    $(".timer").text(count + " secs");
+    countDownSound.play();
     if (count < 0) {
         clearInterval(timerId);
         $(".timer").text("");
 
         var playerNum = getRandomNumber(0, 2);
-        var computerNum = getRandomNumber(0,2);
+        var computerNum = getRandomNumber(0, 2);
 
-        var player = dataLookup[playerNum]
+        var player = dataLookup[playerNum];
         var computer = dataLookup[computerNum];
+
+        decideWinner(player, computer);
 
         $playerImg.css('background-image', `url(${data[player].image})`);
         $computerImg.css('background-image', `url(${data[computer].image})`);
     }
 }
 
-
 function getRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min +1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function decideWinner(player, computer) {
+
+    if (player == computer) {
+        $tieScore.text(parseInt($tieScore.text()) + 1)
+    } else if (data[player].beats === computer) {
+        $playerScore.text(parseInt($playerScore.text()) + 1)
+    } else {
+        $computerScore.text(parseInt($computerScore.text()) + 1)
+    }
+
 }
